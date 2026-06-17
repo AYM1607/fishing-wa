@@ -1,0 +1,267 @@
+[
+  {
+    "label": "American shad",
+    "count": 3,
+    "overabundant_count": 0
+  },
+  {
+    "label": "Black bullhead",
+    "count": 4,
+    "overabundant_count": 0
+  },
+  {
+    "label": "Black crappie",
+    "count": 134,
+    "overabundant_count": 0
+  },
+  {
+    "label": "Bluegill",
+    "count": 95,
+    "overabundant_count": 0
+  },
+  {
+    "label": "Bridgelip sucker",
+    "count": 5,
+    "overabundant_count": 0
+  },
+  {
+    "label": "Brook trout",
+    "count": 226,
+    "overabundant_count": 62
+  },
+  {
+    "label": "Brown bullhead",
+    "count": 126,
+    "overabundant_count": 1
+  },
+  {
+    "label": "Brown trout",
+    "count": 76,
+    "overabundant_count": 1
+  },
+  {
+    "label": "Bull trout",
+    "count": 22,
+    "overabundant_count": 0
+  },
+  {
+    "label": "Burbot",
+    "count": 10,
+    "overabundant_count": 0
+  },
+  {
+    "label": "Channel catfish",
+    "count": 44,
+    "overabundant_count": 0
+  },
+  {
+    "label": "Chinook salmon",
+    "count": 17,
+    "overabundant_count": 0
+  },
+  {
+    "label": "Chiselmouth",
+    "count": 8,
+    "overabundant_count": 0
+  },
+  {
+    "label": "Coastal cutthroat trout (resident)",
+    "count": 105,
+    "overabundant_count": 0
+  },
+  {
+    "label": "Coho salmon",
+    "count": 22,
+    "overabundant_count": 0
+  },
+  {
+    "label": "Common carp",
+    "count": 52,
+    "overabundant_count": 0
+  },
+  {
+    "label": "Cutthroat trout",
+    "count": 475,
+    "overabundant_count": 103
+  },
+  {
+    "label": "Golden trout",
+    "count": 106,
+    "overabundant_count": 4
+  },
+  {
+    "label": "Grass pickerel",
+    "count": 6,
+    "overabundant_count": 0
+  },
+  {
+    "label": "Green sunfish",
+    "count": 10,
+    "overabundant_count": 0
+  },
+  {
+    "label": "Kokanee",
+    "count": 69,
+    "overabundant_count": 0
+  },
+  {
+    "label": "Lahontan Cutthroat Trout",
+    "count": 5,
+    "overabundant_count": 0
+  },
+  {
+    "label": "Lake trout",
+    "count": 10,
+    "overabundant_count": 0
+  },
+  {
+    "label": "Lake whitefish",
+    "count": 5,
+    "overabundant_count": 0
+  },
+  {
+    "label": "Largemouth bass",
+    "count": 292,
+    "overabundant_count": 0
+  },
+  {
+    "label": "Largescale sucker",
+    "count": 10,
+    "overabundant_count": 0
+  },
+  {
+    "label": "Mountain whitefish",
+    "count": 16,
+    "overabundant_count": 0
+  },
+  {
+    "label": "Northern pike",
+    "count": 2,
+    "overabundant_count": 0
+  },
+  {
+    "label": "Northern pikeminnow",
+    "count": 28,
+    "overabundant_count": 0
+  },
+  {
+    "label": "Peamouth",
+    "count": 14,
+    "overabundant_count": 0
+  },
+  {
+    "label": "Prickly sculpin",
+    "count": 1,
+    "overabundant_count": 0
+  },
+  {
+    "label": "Pumpkinseed Sunfish",
+    "count": 134,
+    "overabundant_count": 0
+  },
+  {
+    "label": "Pygmy Whitefish",
+    "count": 4,
+    "overabundant_count": 0
+  },
+  {
+    "label": "Rainbow trout",
+    "count": 1050,
+    "overabundant_count": 35
+  },
+  {
+    "label": "Redside shiner",
+    "count": 8,
+    "overabundant_count": 0
+  },
+  {
+    "label": "Rock bass",
+    "count": 13,
+    "overabundant_count": 0
+  },
+  {
+    "label": "Signal crayfish",
+    "count": 24,
+    "overabundant_count": 0
+  },
+  {
+    "label": "Smallmouth bass",
+    "count": 63,
+    "overabundant_count": 0
+  },
+  {
+    "label": "Sockeye salmon",
+    "count": 10,
+    "overabundant_count": 0
+  },
+  {
+    "label": "Spiny crayfish",
+    "count": 1,
+    "overabundant_count": 0
+  },
+  {
+    "label": "Steelhead",
+    "count": 12,
+    "overabundant_count": 0
+  },
+  {
+    "label": "Tench",
+    "count": 19,
+    "overabundant_count": 0
+  },
+  {
+    "label": "Threespine stickleback",
+    "count": 6,
+    "overabundant_count": 0
+  },
+  {
+    "label": "Tiger muskie",
+    "count": 9,
+    "overabundant_count": 0
+  },
+  {
+    "label": "Tiger trout",
+    "count": 45,
+    "overabundant_count": 0
+  },
+  {
+    "label": "Triploid Grass Carp",
+    "count": 6,
+    "overabundant_count": 0
+  },
+  {
+    "label": "Walleye",
+    "count": 24,
+    "overabundant_count": 0
+  },
+  {
+    "label": "Warmouth",
+    "count": 9,
+    "overabundant_count": 0
+  },
+  {
+    "label": "Westslope cutthroat trout",
+    "count": 53,
+    "overabundant_count": 0
+  },
+  {
+    "label": "White crappie",
+    "count": 8,
+    "overabundant_count": 0
+  },
+  {
+    "label": "White sturgeon",
+    "count": 5,
+    "overabundant_count": 0
+  },
+  {
+    "label": "Yellow bullhead",
+    "count": 9,
+    "overabundant_count": 0
+  },
+  {
+    "label": "Yellow perch",
+    "count": 201,
+    "overabundant_count": 0
+  }
+]

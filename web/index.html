@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>WA Fishing Map</title>
+  </head>
+  <body>
+    <div id="app">
+      <aside id="sidebar">
+        <h1>WA Fishing Map</h1>
+        <p class="sub">Lakes from <a href="https://wdfw.wa.gov/fishing/locations" target="_blank" rel="noopener">WDFW</a></p>
+
+        <label class="field">
+          <span>Species</span>
+          <select id="species"></select>
+        </label>
+
+        <fieldset class="field">
+          <legend>Water type</legend>
+          <label><input type="checkbox" id="cat-lowland" checked /> Lowland lakes</label>
+          <label><input type="checkbox" id="cat-high" checked /> High lakes</label>
+        </fieldset>
+
+        <label class="toggle" id="over-toggle-wrap" hidden>
+          <input type="checkbox" id="over-toggle" />
+          <span>Show overpopulated areas</span>
+        </label>
+
+        <div id="legend">
+          <div><span class="dot dot-normal"></span> Lake</div>
+          <div><span class="dot dot-over"></span> Overpopulated for species</div>
+        </div>
+
+        <p id="count" class="count"></p>
+      </aside>
+      <div id="map"></div>
+    </div>
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>

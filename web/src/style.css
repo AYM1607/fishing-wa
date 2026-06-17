@@ -1,0 +1,51 @@
+:root {
+  --bg: #0f172a;
+  --panel: #1e293b;
+  --text: #e2e8f0;
+  --muted: #94a3b8;
+  --accent: #38bdf8;
+  --over: #ef4444;
+}
+
+* { box-sizing: border-box; }
+html, body { margin: 0; height: 100%; font-family: system-ui, sans-serif; }
+
+#app { display: flex; height: 100vh; }
+
+#sidebar {
+  width: 300px;
+  flex: 0 0 300px;
+  background: var(--panel);
+  color: var(--text);
+  padding: 1rem 1.25rem;
+  overflow-y: auto;
+}
+#sidebar h1 { font-size: 1.25rem; margin: 0 0 0.1rem; }
+#sidebar .sub { margin: 0 0 1.25rem; color: var(--muted); font-size: 0.85rem; }
+#sidebar a { color: var(--accent); }
+
+.field { display: block; margin-bottom: 1.1rem; border: none; padding: 0; }
+.field > span, .field > legend { display: block; font-size: 0.8rem; text-transform: uppercase;
+  letter-spacing: 0.04em; color: var(--muted); margin-bottom: 0.4rem; }
+.field select {
+  width: 100%; padding: 0.5rem; border-radius: 6px; border: 1px solid #334155;
+  background: var(--bg); color: var(--text); font-size: 0.95rem;
+}
+fieldset.field label { display: block; margin: 0.3rem 0; font-size: 0.9rem; }
+
+.toggle { display: flex; align-items: center; gap: 0.5rem; margin-bottom: 1.1rem; font-size: 0.9rem; }
+
+#legend { font-size: 0.85rem; color: var(--muted); border-top: 1px solid #334155; padding-top: 0.9rem; }
+#legend div { display: flex; align-items: center; gap: 0.5rem; margin: 0.25rem 0; }
+.dot { width: 12px; height: 12px; border-radius: 50%; display: inline-block; }
+.dot-normal { background: var(--accent); }
+.dot-over { background: var(--over); }
+
+.count { margin-top: 1rem; font-size: 0.85rem; color: var(--muted); }
+
+#map { flex: 1; height: 100%; }
+
+.popup h3 { margin: 0 0 0.3rem; font-size: 1rem; }
+.popup .meta { color: #475569; font-size: 0.85rem; margin: 0.15rem 0; }
+.popup .over { color: var(--over); font-weight: 600; }
+.popup ul { margin: 0.3rem 0 0; padding-left: 1.1rem; font-size: 0.85rem; }

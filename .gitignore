@@ -1,0 +1,16 @@
+# Python / crawler (regenerable; large)
+crawler/.venv/
+crawler/data/*.db
+crawler/data/*.db-journal
+crawler/data/http_cache.sqlite
+__pycache__/
+*.pyc
+
+# Node / web
+web/node_modules/
+web/dist/
+
+# Exported data IS committed (web/public/data/*.json, *.geojson) — do not ignore it.
+
+# OS
+.DS_Store

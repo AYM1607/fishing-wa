@@ -1,0 +1,14 @@
+[project]
+name = "fishing-wa-crawler"
+version = "0.1.0"
+description = "Crawl WDFW fishing locations into SQLite and export GeoJSON"
+requires-python = ">=3.11"
+dependencies = [
+    "requests>=2.32",
+    "requests-cache>=1.2",
+    "beautifulsoup4>=4.12",
+    "lxml>=5.2",
+]
+
+[tool.uv]
+package = false

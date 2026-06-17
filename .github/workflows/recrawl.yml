@@ -1,0 +1,73 @@
+name: Recrawl WDFW data
+
+# Weekly refresh: crawl WDFW -> SQLite -> export JSON, commit the refreshed data,
+# then build and deploy the static map to GitHub Pages.
+#
+# One-time setup: repo Settings -> Pages -> Build and deployment -> Source: "GitHub Actions".
+
+on:
+  schedule:
+    - cron: "0 9 * * 0" # Sundays 09:00 UTC
+  workflow_dispatch: {} # allow manual runs from the Actions tab
+
+concurrency:
+  group: pages # shared with deploy.yml so Pages deployments never overlap
+  cancel-in-progress: false
+
+permissions:
+  contents: write # commit refreshed data files
+  pages: write # deploy to Pages
+  id-token: write # Pages deployment auth
+
+jobs:
+  recrawl:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deploy.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up uv
+        uses: astral-sh/setup-uv@v6
+
+      - name: Crawl + export
+        working-directory: crawler
+        env:
+          CRAWL_DELAY_S: "1.0" # politer pacing for the unattended run
+        run: |
+          uv run crawl.py
+          uv run export_geojson.py
+
+      - name: Commit refreshed data (if changed)
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "data: weekly WDFW recrawl"
+          file_pattern: "web/public/data/locations.geojson web/public/data/species.json"
+
+      - name: Set up pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 11
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+          cache-dependency-path: web/pnpm-lock.yaml
+
+      - name: Build site
+        working-directory: web
+        run: |
+          pnpm install --frozen-lockfile
+          pnpm build
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: web/dist
+
+      - name: Deploy to GitHub Pages
+        id: deploy
+        uses: actions/deploy-pages@v4
