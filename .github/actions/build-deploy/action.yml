@@ -1,0 +1,42 @@
+name: Build and deploy site
+description: Build the Vite static site and deploy it to GitHub Pages.
+
+# Used by recrawl.yml, refresh-stocking.yml and deploy.yml. Runs in the calling job's
+# workspace, so it builds whatever data that job just exported/committed. The calling job
+# must set `environment: github-pages` and `permissions: { pages: write, id-token: write }`.
+
+outputs:
+  page_url:
+    description: The deployed GitHub Pages URL.
+    value: ${{ steps.deploy.outputs.page_url }}
+
+runs:
+  using: composite
+  steps:
+    - name: Set up pnpm
+      uses: pnpm/action-setup@v4
+      with:
+        version: 11
+
+    - name: Set up Node
+      uses: actions/setup-node@v4
+      with:
+        node-version: 22
+        cache: pnpm
+        cache-dependency-path: web/pnpm-lock.yaml
+
+    - name: Build site
+      shell: bash
+      working-directory: web
+      run: |
+        pnpm install --frozen-lockfile
+        pnpm build
+
+    - name: Upload Pages artifact
+      uses: actions/upload-pages-artifact@v3
+      with:
+        path: web/dist
+
+    - name: Deploy to GitHub Pages
+      id: deploy
+      uses: actions/deploy-pages@v4

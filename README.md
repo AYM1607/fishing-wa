@@ -125,3 +125,8 @@ All three workflows share a single `pages` concurrency group, so data commits an
 deployments never overlap. (The scheduled jobs commit with `GITHUB_TOKEN`, which by design
 does not trigger the push-deploy workflow — each scheduled job deploys its own fresh data,
 so there's no double deploy.)
+
+The build + Pages deploy steps are factored into a composite action,
+`.github/actions/build-deploy`, that all three workflows call as a single step. It's a
+composite (not a reusable workflow) so it runs in the calling job's workspace and builds the
+data that job just exported — no separate runner that would miss the fresh commit.
