@@ -81,8 +81,13 @@ The map has two tabs and a name search:
 
 ## Refreshing data
 
-Re-run the crawl + export and rebuild. The pipeline is idempotent; cached HTTP keeps it
-cheap locally. Set `CRAWL_DELAY_S` to change the per-request delay (default 0.5s).
+Full refresh — re-run the crawl + export and rebuild. The pipeline is idempotent; cached
+HTTP keeps it cheap locally. Set `CRAWL_DELAY_S` to change the per-request delay (default
+0.5s) and `STOCKING_MONTHS` to change the recency window (default 6).
+
+Stocking-only refresh — `uv run refresh_stocking.py` updates just the stocking fields of
+`locations.geojson` + `stocks.json` from the committed `geocodes.json`, with one SODA API
+call and no wdfw.gov load. Use this for frequent (e.g. daily) updates.
 
 > **Note on the species filter:** WDFW's listing views silently ignore a species filter
 > when the species id isn't in that listing's own dropdown and return the *entire* list.
@@ -102,12 +107,21 @@ One-time setup after pushing to GitHub:
 2. Trigger once from the **Actions** tab (`Run workflow`) to verify, or wait for Sunday.
 
 The CI run does a full fresh crawl (no persisted cache → always current) at a politer 1s
-delay, with automatic retries/backoff on transient WDFW errors.
+delay, with automatic retries/backoff on transient WDFW errors. It seeds geo_codes from the
+committed `geocodes.json`, so it fetches ~0 lake detail pages.
+
+### Daily stocking refresh (`.github/workflows/refresh-stocking.yml`)
+
+Runs every **day at 13:00 UTC** (~6am Pacific): refreshes only the stocking data (one SODA
+API call, no wdfw.gov crawl), commits `locations.geojson` + `stocks.json`, and deploys. This
+keeps stocking current daily while the heavy lake/species crawl stays weekly.
 
 ### Deploy on push (`.github/workflows/deploy.yml`)
 
 Pushing site changes under `web/**` to `main` builds and deploys to Pages immediately, so
-you don't have to wait for the weekly run. Both workflows share a `pages` concurrency group
-so deployments never overlap. (The recrawl's data commit is made with `GITHUB_TOKEN`, which
-by design does not trigger this workflow — the recrawl publishes its own fresh data, so
-there's no double deploy.)
+you don't have to wait for a scheduled run.
+
+All three workflows share a single `pages` concurrency group, so data commits and Pages
+deployments never overlap. (The scheduled jobs commit with `GITHUB_TOKEN`, which by design
+does not trigger the push-deploy workflow — each scheduled job deploys its own fresh data,
+so there's no double deploy.)

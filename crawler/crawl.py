@@ -13,7 +13,6 @@ Run:  uv run crawl.py
 """
 from __future__ import annotations
 
-import datetime as dt
 import json
 import math
 import os
@@ -27,6 +26,8 @@ from bs4 import BeautifulSoup
 from requests.adapters import HTTPAdapter
 from urllib3.util.retry import Retry
 
+from stocking import cutoff_date, fetch_plants
+
 BASE = "https://wdfw.wa.gov/fishing/locations/"
 PATH_PREFIX = "/fishing/locations/"
 DB_PATH = Path(__file__).parent / "data" / "wdfw.db"
@@ -34,9 +35,6 @@ CACHE_PATH = Path(__file__).parent / "data" / "http_cache"
 # Committed lake_id -> geo_code map. Geo codes never change, so after the first full
 # build the weekly CI crawl fetches ~0 detail pages (it seeds from this file).
 GEOCODES_PATH = Path(__file__).parent / "geocodes.json"
-# WDFW Fish Plants dataset (Socrata SODA API) on the WA Open Data Portal.
-STOCKING_API = "https://data.wa.gov/resource/6fex-3r7d.json"
-STOCKING_MONTHS = int(os.environ.get("STOCKING_MONTHS", "6"))  # recency window to keep
 USER_AGENT = "fishing-wa-dev/0.1 (personal mapping project; contact via github)"
 # Delay between real network hits (not cache hits). Override in CI to be politer.
 REQUEST_DELAY_S = float(os.environ.get("CRAWL_DELAY_S", "0.5"))
@@ -251,34 +249,16 @@ def fetch_stocking(db) -> None:
     by geo_code. Only plants whose geo_code matches a crawled lake are kept."""
     geo_to_id = {g: i for i, g in db.execute(
         "SELECT id, geo_code FROM waterbody WHERE geo_code IS NOT NULL")}
-    cutoff = (dt.date.today() - dt.timedelta(days=30 * STOCKING_MONTHS)).isoformat()
-    kept = 0
-    offset = 0
+    cutoff = cutoff_date()
     db.execute("DELETE FROM stocking")
-    while True:
-        rows = session.get(STOCKING_API, params={
-            "$select": "geo_code,release_end_date,species,number_released,total_pounds,facility",
-            "$where": f"release_end_date >= '{cutoff}'",
-            "$order": "release_end_date DESC",
-            "$limit": 5000, "$offset": offset,
-        }, timeout=60).json()
-        if not rows:
-            break
-        for r in rows:
-            wid = geo_to_id.get(r.get("geo_code"))
-            if not wid:
-                continue
-            db.execute(
-                "INSERT INTO stocking VALUES (?,?,?,?,?,?)",
-                (wid, (r.get("release_end_date") or "")[:10], r.get("species"),
-                 int(float(r["number_released"])) if r.get("number_released") else None,
-                 float(r["total_pounds"]) if r.get("total_pounds") else None,
-                 (r.get("facility") or "").strip() or None),
-            )
-            kept += 1
-        offset += len(rows)
-        if len(rows) < 5000:
-            break
+    kept = 0
+    for p in fetch_plants(cutoff):
+        wid = geo_to_id.get(p["geo_code"])
+        if not wid:
+            continue
+        db.execute("INSERT INTO stocking VALUES (?,?,?,?,?,?)",
+                   (wid, p["date"], p["species"], p["number"], p["total_pounds"], p["facility"]))
+        kept += 1
     db.commit()
     lakes = db.execute("SELECT COUNT(DISTINCT waterbody_id) FROM stocking").fetchone()[0]
     print(f"[stocking] kept {kept} plant events across {lakes} lakes (since {cutoff})")

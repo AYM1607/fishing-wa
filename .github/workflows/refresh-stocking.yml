@@ -1,0 +1,73 @@
+name: Refresh stocking (daily)
+
+# Stocking changes daily (especially in summer), so refresh just the stocking data every
+# day: one SODA API call joined to the committed geocodes.json + locations.geojson, then
+# commit and deploy. No wdfw.gov crawl — the heavy lake/species crawl stays weekly.
+#
+# Shares the `pages` concurrency group with recrawl.yml / deploy.yml so data commits and
+# Pages deployments never overlap.
+
+on:
+  schedule:
+    - cron: "0 13 * * *" # daily 13:00 UTC (~6am Pacific)
+  workflow_dispatch: {}
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deploy.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up uv
+        uses: astral-sh/setup-uv@v6
+
+      - name: Refresh stocking
+        working-directory: crawler
+        run: uv run refresh_stocking.py
+
+      - name: Commit refreshed stocking (if changed)
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "data: daily stocking refresh"
+          file_pattern: >-
+            web/public/data/locations.geojson
+            web/public/data/stocks.json
+
+      - name: Set up pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 11
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+          cache-dependency-path: web/pnpm-lock.yaml
+
+      - name: Build site
+        working-directory: web
+        run: |
+          pnpm install --frozen-lockfile
+          pnpm build
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: web/dist
+
+      - name: Deploy to GitHub Pages
+        id: deploy
+        uses: actions/deploy-pages@v4
