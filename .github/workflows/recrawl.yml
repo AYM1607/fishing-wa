@@ -43,7 +43,13 @@ jobs:
         uses: stefanzweifel/git-auto-commit-action@v5
         with:
           commit_message: "data: weekly WDFW recrawl"
-          file_pattern: "web/public/data/locations.geojson web/public/data/species.json"
+          # geocodes.json is the committed geo_code cache: keeping it in the repo means
+          # the next run seeds from it and fetches ~0 lake detail pages.
+          file_pattern: >-
+            web/public/data/locations.geojson
+            web/public/data/species.json
+            web/public/data/stocks.json
+            crawler/geocodes.json
 
       - name: Set up pnpm
         uses: pnpm/action-setup@v4

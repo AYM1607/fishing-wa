@@ -11,25 +11,50 @@
         <h1>WA Fishing Map</h1>
         <p class="sub">Lakes from <a href="https://wdfw.wa.gov/fishing/locations" target="_blank" rel="noopener">WDFW</a></p>
 
-        <label class="field">
-          <span>Species</span>
-          <select id="species"></select>
-        </label>
+        <div class="search">
+          <input id="search" type="text" placeholder="Search lakes by name…" autocomplete="off" spellcheck="false" />
+          <ul id="search-results" hidden></ul>
+        </div>
 
-        <fieldset class="field">
-          <legend>Water type</legend>
-          <label><input type="checkbox" id="cat-lowland" checked /> Lowland lakes</label>
-          <label><input type="checkbox" id="cat-high" checked /> High lakes</label>
-        </fieldset>
+        <div class="tabs" role="tablist">
+          <button class="tab active" data-tab="explore">Explore</button>
+          <button class="tab" data-tab="stocks">Recent stocks</button>
+        </div>
 
-        <label class="toggle" id="over-toggle-wrap" hidden>
-          <input type="checkbox" id="over-toggle" />
-          <span>Show overpopulated areas</span>
-        </label>
+        <!-- Explore -->
+        <div class="panel" id="panel-explore">
+          <label class="field">
+            <span>Species</span>
+            <select id="species"></select>
+          </label>
 
-        <div id="legend">
-          <div><span class="dot dot-normal"></span> Lake</div>
-          <div><span class="dot dot-over"></span> Overpopulated for species</div>
+          <fieldset class="field">
+            <legend>Water type</legend>
+            <label><input type="checkbox" id="cat-lowland" checked /> Lowland lakes</label>
+            <label><input type="checkbox" id="cat-high" checked /> High lakes</label>
+          </fieldset>
+
+          <label class="toggle" id="over-toggle-wrap" hidden>
+            <input type="checkbox" id="over-toggle" />
+            <span>Show overpopulated areas</span>
+          </label>
+
+          <div class="legend">
+            <div><span class="dot dot-normal"></span> Lake</div>
+            <div><span class="dot dot-over"></span> Overpopulated for species</div>
+          </div>
+        </div>
+
+        <!-- Recent stocks -->
+        <div class="panel" id="panel-stocks" hidden>
+          <p class="sub" id="stocks-sub">Lakes stocked recently, newest first.</p>
+          <div class="legend recency">
+            <div><span class="dot r0"></span> Last 7 days</div>
+            <div><span class="dot r1"></span> Last 30 days</div>
+            <div><span class="dot r2"></span> Last 90 days</div>
+            <div><span class="dot r3"></span> Older</div>
+          </div>
+          <ul id="stock-list"></ul>
         </div>
 
         <p id="count" class="count"></p>

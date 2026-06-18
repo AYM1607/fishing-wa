@@ -1,13 +1,17 @@
 # fishing-wa
 
-Interactive map of Washington State fishing lakes — filter by species and surface
-**overpopulated** ("overabundant") lakes for a given species. Data is crawled from
-[WDFW](https://wdfw.wa.gov/fishing/locations).
+Interactive map of Washington State fishing lakes. **Explore** lakes by species and
+surface **overpopulated** ("overabundant") lakes for a species; switch to **Recent stocks**
+to see which lakes were stocked most recently (color-graded by recency); and **search**
+lakes by name. Data is crawled from [WDFW](https://wdfw.wa.gov/fishing/locations) plus the
+[WDFW Fish Plants](https://data.wa.gov/dataset/WDFW-Fish-Plants/6fex-3r7d) open dataset.
 
 Two parts:
 
 1. **Crawler** (`crawler/`, Python via uv) — scrapes the WDFW lowland-lakes, high-lakes,
-   and high-lakes/overabundant listings into a SQLite database, then exports static JSON.
+   and high-lakes/overabundant listings into a SQLite database, captures each lake's
+   `geo_code` from its detail page, pulls recent stocking from the WDFW Fish Plants SODA
+   API (joined by `geo_code`), then exports static JSON.
 2. **Web** (`web/`, Vite + TypeScript + Leaflet) — a fully static map that loads the
    exported JSON. No backend.
 
@@ -39,11 +43,22 @@ sqlite3 crawler/data/wdfw.db 'SELECT category, COUNT(*) FROM waterbody GROUP BY 
 
 ### Data model (SQLite)
 
-- `waterbody(id, name, category, county, acres, elevation, lat, lng, url)` — `id` is the
-  WDFW URL slug (e.g. `high-lakes/airplane`), which dedups a lake across queries.
+- `waterbody(id, name, category, county, acres, elevation, lat, lng, url, geo_code)` — `id`
+  is the WDFW URL slug (e.g. `high-lakes/airplane`); `geo_code` is WDFW's lake id, used to
+  join stocking.
 - `species(id, label)` — `id` is WDFW's numeric species id.
 - `waterbody_species(waterbody_id, species_id)` — which species are present in each lake.
 - `overabundant(waterbody_id, species_id)` — lake is overpopulated for that species.
+- `stocking(waterbody_id, stock_date, species, number_released, total_pounds, facility)` —
+  recent plants from the WDFW Fish Plants dataset (last `STOCKING_MONTHS`, default 6).
+
+#### Geo codes (`crawler/geocodes.json`)
+
+Stocking has no coordinates, only a `geo_code`, so we join it to lakes by `geo_code` — which
+lives on each lake's detail page. Capturing it means one fetch per lake (~1,700) the first
+time. The resulting `lake_id → geo_code` map is committed as `crawler/geocodes.json`; the
+crawler seeds from it and only fetches detail pages for lakes it doesn't yet know, so repeat
+runs (including weekly CI) fetch ~0 detail pages. Stocking itself is one SODA API call.
 
 ## 2. Run the map
 
@@ -54,8 +69,15 @@ pnpm dev        # dev server, opens the map
 pnpm build      # static production build -> web/dist/ (deploy anywhere)
 ```
 
-The map clusters all lakes, lets you filter by species and water type, and — once a species
-is selected — a toggle highlights overpopulated lakes (red markers + a density heat layer).
+The map has two tabs and a name search:
+
+- **Explore** — cluster all lakes, filter by species and water type; once a species is
+  selected, a toggle highlights overpopulated lakes (red markers + a density heat layer).
+- **Recent stocks** — shows only recently-stocked lakes, marker color graded by recency
+  (≤7d / ≤30d / ≤90d / older), with a sortable newest-first list; clicking a list row flies
+  to the lake.
+- **Search** — type a lake name for an autocomplete dropdown; selecting flies to the lake
+  and opens its popup. Works from either tab.
 
 ## Refreshing data
 
